@@ -1,79 +1,95 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <style>
-.error{color:red;}
+.error{color:red;} <!--Defining red color for this class-->
 </style>
 </head>
 <body>
 <?php
-$countryArray = array('UNITED ARAB EMIRATES'=>'971','AFGHANISTAN'=>'93','Bangladesh'=>'880');
-	
+$countryArray = array('ANDORRA'=>'376','ANGUILLA'=>'1264','AFGHANISTAN'=>'93','Bangladesh'=>'880',
+					  'BAHRAIN'=>'973','BRAZIL'=>'55','GERMANY'=>'49','SPAIN'=>'34','INDIA'=>'91');//Country name with country code associative array
+					  
+//function	for remove space and slash and return clean data
 function test_input($data) {
   $data = trim($data);
   $data = stripslashes($data);
-  $data = htmlspecialchars($data);
   return $data;
 }
+//Defining Variables
 $nameErr = $fullnameErr = $emailErr = $genderErr = $phoneErr = $passErr = $cpassErr ="";
 $name = $fullname = $email = $gender = $phone = $showphone = $password = $cpassword = "";
-$edu=$_POST['edu'];
+//check if sever has a post request
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	
+	//sanitization for username
 	if (empty($_POST["un"])) {
     $nameErr = "Username is required";
   } else {
     $name = test_input($_POST["un"]);
-    if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
+    if (!preg_match("/^[a-zA-Z ]*$/",$name)) {//check is cheracter or not
       $nameErr = "Only letters and white space allowed";
     }
   }
 }
+//sanitization for FullName
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if (empty($_POST["fn"])) {
     $fullnameErr = "FullName is required";
   } else {
     $fullname = test_input($_POST["fn"]);
-    if (!preg_match("/^[a-zA-Z ]*$/",$fullname)) {
+    if (!preg_match("/^[a-zA-Z ]*$/",$fullname)) {//check is cheracter or not
       $fullnameErr = "Only letters and white space allowed";
     }
   }
+  
+  //sanitization for Email
 if (empty($_POST["ue"])) {
     $emailErr = "Email is required";
   } else {
     $email = test_input($_POST["ue"]);
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {//check if it's a valid email
       $emailErr = "Invalid email format";
     }
   }
- if (empty($_POST["up"])) {
+  //sanitization for Phone
+ if (empty($_POST["up"])) 
+	{
     $phoneErr = "Phone Number is required";
-  } else {
-    $phone = test_input($_POST["up"]);
-	$code = test_input($_POST["code"]);
+    } 
+ else 
+	{
+    $phone = test_input($_POST["up"]);//phone number
+	$code = test_input($_POST["code"]);//Country code
 	$showphone = $phone;
 	$phone = $code.$phone;
-
-    if (!preg_match("/^[0-9]{9}/", $phone)) {
+    if (!preg_match("/^[0-9]/", $phone)) {//check is digit or not
       $phoneErr = "Invalid phone number";
     }
-  }
+	}
+	 //sanitization for Password
    if (empty($_POST["pw"])) {
     $passErr = "Password is required";
   } else {
     $password = test_input($_POST["pw"]);
-    if (!preg_match("/^[a-zA-Z0-9]{8}/", $password)) {
+    if (!preg_match("/^[a-zA-Z0-9]{6}/", $password)) {//check if it minimum 6 character
       $passErr = "password is too short";
     }
   }
+   //sanitization for Gender
    if (empty($_POST["gen"])) {
     $genderErr = "Gender is required";
   } else {
     $gender = test_input($_POST["gen"]);
   }
 }
-
 ?>
 <form name="application" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-<table  >
+<!--Table Starts -->
+<table align="center" style="font-size:30px">
+	<!--First Row -->
 	<tr>
 		<td>
 		username :
@@ -83,6 +99,7 @@ if (empty($_POST["ue"])) {
 		 <span class="error">* <?php echo $nameErr;?></span>
 		</td>
 	</tr>
+	<!--Second Row -->
 	<tr>
 		<td>
 		Fullname :
@@ -92,6 +109,7 @@ if (empty($_POST["ue"])) {
 		  <span class="error">* <?php echo $fullnameErr;?></span>
 		</td>
 	</tr>
+	<!--Third Row -->
 	<tr>
 		<td>
 		Email :
@@ -101,6 +119,7 @@ if (empty($_POST["ue"])) {
 		 <span class="error">* <?php echo $emailErr;?></span>
 		</td>
 	</tr>
+	<!--Forth Row -->
 	<tr>
 		<td>
 		Phone :
@@ -120,6 +139,7 @@ if (empty($_POST["ue"])) {
 		 <span class="error">* <?php echo $phoneErr;?></span>
 		</td>
 	</tr>
+	<!--Fifth Row -->
 	<tr>
 		<td>
 		Password :
@@ -129,61 +149,58 @@ if (empty($_POST["ue"])) {
 		 <span class="error">* <?php echo $passErr;?></span>
 		</td>
 	</tr>
+	<!--Sixth Row -->
 	<tr>
 		<td>
 		Gender :
 		</td>
 		<td>
+		<!--Radio For gender -->
 		 <input type ="radio" name ="gen" <?php if (isset($gender) && $gender=="Male") echo "checked";?> value="Male"/>Male
 		 <input type ="radio" name ="gen" <?php if (isset($gender) && $gender=="Female") echo "checked";?> value="Female"/>Female
 		 <input type ="radio" name ="gen" <?php if (isset($gender) && $gender=="Other") echo "checked";?> value="Other"/>Other
 		 <span class="error">* <?php echo $genderErr;?></span>
 		</td>
 	</tr>
+	<!--Seventh Row -->
 	<tr>
 		<td>
 		Education :
 		</td>
 		<td>
+		<!--Checkbox For Education -->
 		 <input type="checkbox" name="edu[]" value="SSC">SSC
 		 <input type="checkbox" name="edu[]" value="HSC">HSC
 		 <input type="checkbox" name="edu[]" value="BSC">BSC
 		 <input type="checkbox" name="edu[]" value="MSC">MSC
 		</td>
 	</tr>
+	<!--Eighth Row -->
 	<tr>
 	<tr>
 		<td>
 		
 		</td>
 		<td>
-		<input type="submit" >
+		<input type="submit" style="font-size:30px;">
 		</td>
 	</tr>
-
-
 </table>
 </form>
-<?php
-echo "<h2>Your Input:</h2>";
-echo"username:  ". $name;
-
-echo "<br>FullName:  ".$fullname;
-
-echo"<br>Email:  ". $email;
-
-echo"<br>Phone no:  ". $phone;
-
-echo"<br>Password:  ". $password;
-
-echo"<br>Gender:  ". $gender;
-echo "<br>Education:";
-echo "<ul>";
-foreach($edu as $ed)
-{
-	echo "<li>".$ed."</li>";
-}
-echo "</ul>";
-?>
+	<?php
+	//Printing All The Inputs
+	echo "<h2>Your Input:</h2>";
+	echo "UserName : ".$name;
+	echo "<br>";
+	echo "FullName : ".$fullname;
+	echo "<br>";
+	echo "Phone : ".$phone;
+	echo "<br>";
+	echo "Email : ".$email;
+	echo "<br>";
+	echo "Password : ".$password;
+	echo "<br>";
+	echo "Gender : ".$gender;
+	?>
 </body>
 </html>
